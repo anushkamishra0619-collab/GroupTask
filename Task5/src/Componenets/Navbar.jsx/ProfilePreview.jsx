@@ -1,59 +1,45 @@
-import { VscGithub } from "react-icons/vsc";
-
-import { useEffect, useState } from "react";
-import { FiPower } from "react-icons/fi";
-import { FaRegCircle, FaCircle } from "react-icons/fa";
+import { useEffect, useRef, useState } from "react";
+import JourneySidebar from "./JourneySidebar";
+import journey from "./journey";
 import "./ProfileSkills.css";
 
-const journey = [
-  {
-    title: "Analyze Profile",
-    sub: "Public profile overview",
-    description:
-      "Review the public account details and repository totals for this GitHub profile.",
-  },
-  {
-    title: "Understand skills",
-    sub: "Languages found in repositories",
-    description:
-      "See the programming languages GitHub reports for this user's public repositories, with the number of repositories using each language.",
-  },
-  {
-    title: "Explore issues",
-    sub: "Find a place to contribute",
-    description:
-      "Use the skills identified above to look for open-source issues tagged with a matching language or technology. Issue matching is not available yet.",
-  },
-  {
-    title: "Track contributions",
-    sub: "Continue your progress",
-    description:
-      "Keep building your public project history. This preview currently shows public repositories and does not yet track contribution history over time.",
-  },
-];
+const githubProfileRequests = new Map();
 
-async function fetchGitHubData(username, signal) {
+function createGitHubError(response) {
+  if (response.status === 404) {
+    return new Error("No GitHub user with that username was found.");
+  }
+
+  if (response.status === 403 || response.status === 429) {
+    const resetAt = Number(response.headers.get("x-ratelimit-reset"));
+    const retryTime = Number.isFinite(resetAt) && resetAt > 0
+      ? ` Try again after ${new Date(resetAt * 1000).toLocaleTimeString([], {
+          hour: "numeric",
+          minute: "2-digit",
+        })}.`
+      : " Please try again later.";
+
+    return new Error(`GitHub's public API rate limit was reached.${retryTime}`);
+  }
+
+  return new Error("GitHub profile data could not be loaded. Please try again.");
+}
+
+async function requestGitHubData(username) {
   const headers = { Accept: "application/vnd.github+json" };
   const [userResponse, reposResponse] = await Promise.all([
     fetch(`https://api.github.com/users/${encodeURIComponent(username)}`, {
       headers,
-      signal,
     }),
     fetch(
       `https://api.github.com/users/${encodeURIComponent(username)}/repos?per_page=100&sort=updated`,
-      { headers, signal },
+      { headers },
     ),
   ]);
 
-  if (userResponse.status === 404) {
-    throw new Error(`No GitHub user named "${username}" was found.`);
-  }
   if (!userResponse.ok || !reposResponse.ok) {
     const response = !userResponse.ok ? userResponse : reposResponse;
-    if (response.status === 403 || response.status === 429) {
-      throw new Error("GitHub's public API rate limit was reached. Please try again later.");
-    }
-    throw new Error("GitHub profile data could not be loaded. Please try again.");
+    throw createGitHubError(response);
   }
 
   return {
@@ -62,35 +48,57 @@ async function fetchGitHubData(username, signal) {
   };
 }
 
-export default function ProfilePreview({ username, onBack }) {
+function fetchGitHubData(username) {
+  const requestKey = username.trim().toLowerCase();
+  const cachedRequest = githubProfileRequests.get(requestKey);
+  if (cachedRequest) return cachedRequest;
+
+  const request = requestGitHubData(username).catch((error) => {
+    githubProfileRequests.delete(requestKey);
+    throw error;
+  });
+
+  githubProfileRequests.set(requestKey, request);
+  return request;
+}
+
+export default function ProfilePreview({
+  username,
+  onBack,
+  onLogout = onBack,
+  onJourneySelect,
+}) {
   const [profile, setProfile] = useState(null);
   const [repos, setRepos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [activeJourney, setActiveJourney] = useState(0);
+  const [activeJourney, setActiveJourney] = useState(1);
   const [retryCount, setRetryCount] = useState(0);
   const [showRepositories, setShowRepositories] = useState(false);
+  const sectionRefs = useRef({});
 
   useEffect(() => {
-    const controller = new AbortController();
+    let isCurrentRequest = true;
 
-    fetchGitHubData(username, controller.signal)
+    fetchGitHubData(username)
       .then(({ user, repos: userRepos }) => {
-        setProfile(user);
-        setRepos(userRepos);
+        if (isCurrentRequest) {
+          setProfile(user);
+          setRepos(userRepos);
+        }
       })
       .catch((fetchError) => {
-        if (fetchError.name !== "AbortError") {
+        if (isCurrentRequest) {
           setError(fetchError.message);
         }
       })
       .finally(() => {
-        if (!controller.signal.aborted) {
-          setLoading(false);
-        }
+        if (isCurrentRequest) setLoading(false);
       });
 
-    return () => controller.abort();
+    return () => {
+      isCurrentRequest = false;
+    };
   }, [username, retryCount]);
 
   const languages = repos.reduce((counts, repo) => {
@@ -108,9 +116,30 @@ export default function ProfilePreview({ username, onBack }) {
     .slice(0, 5);
 
   const handleLogout = () => {
-    if (window.confirm("Are you sure you want to log out?")) {
+    onLogout();
+  };
+
+  const handleJourneySelect = (index) => {
+    if (index === 0) {
       onBack();
+      return;
     }
+
+    if (index === 2 && onJourneySelect) {
+      onJourneySelect(index);
+      return;
+    }
+
+    setActiveJourney(index);
+    requestAnimationFrame(() => {
+      const target = journey[index]?.target;
+      if (target) {
+        sectionRefs.current[target]?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }
+    });
   };
 
   const stats = [
@@ -121,50 +150,15 @@ export default function ProfilePreview({ username, onBack }) {
   ];
 
   return (
-    <div className="app">
-      <aside className="sidebar">
-        <div>
-          <div className="logo">
-            <VscGithub size={22} />
-            <span>DevPath</span>
-          </div>
+    <div className="profile-preview-layout">
+      <JourneySidebar
+        activeStep={activeJourney}
+        onSelect={handleJourneySelect}
+        onLogout={handleLogout}
+      />
 
-          <p className="journey-label">YOUR JOURNEY</p>
-          <ul className="steps">
-            {journey.map((step, index) => (
-              <li key={step.title}>
-                <button
-                  type="button"
-                  className={`step ${activeJourney === index ? "active" : ""}`}
-                  aria-current={activeJourney === index ? "step" : undefined}
-                  onClick={() => setActiveJourney(index)}
-                >
-                  <span className="step-icon">
-                    {activeJourney === index ? <FaCircle /> : <FaRegCircle />}
-                  </span>
-                  <span>
-                    <span className="step-title">{step.title}</span>
-                    <span className="step-sub">{step.sub}</span>
-                  </span>
-                </button>
-              </li>
-            ))}
-          </ul>
-
-          <hr className="divider" />
-          <p className="tagline">
-            A clearer path
-            <span>from curious to shipped.</span>
-          </p>
-        </div>
-
-        <button className="logout" type="button" onClick={handleLogout}>
-          <FiPower /> Log Out
-        </button>
-      </aside>
-
-      <main className="main">
-        <div className="breadcrumb">
+      <main className="profile-preview-main">
+        <div className="preview-breadcrumb">
           DevPath / <b>{showRepositories ? "Repositories" : "Profile Preview"}</b>
         </div>
         <hr className="rule" />
@@ -262,7 +256,13 @@ export default function ProfilePreview({ username, onBack }) {
               </section>
             ) : (
               <>
-            <section className="card summary">
+            <section
+              className="card summary journey-section"
+              id="profile-overview"
+              ref={(element) => {
+                sectionRefs.current["profile-overview"] = element;
+              }}
+            >
               <div className="user">
                 <img className="avatar profile-avatar" src={profile.avatar_url} alt="" />
                 <div>
@@ -294,7 +294,13 @@ export default function ProfilePreview({ username, onBack }) {
             </section>
 
             <div className="grid">
-              <section className="card skills">
+              <section
+                className="card skills journey-section"
+                id="profile-skills"
+                ref={(element) => {
+                  sectionRefs.current["profile-skills"] = element;
+                }}
+              >
                 <h2 className="card-title">LANGUAGES FOUND</h2>
                 <p className="muted small">
                   Based on the primary language of up to 100 recently updated public repositories.
@@ -335,7 +341,13 @@ export default function ProfilePreview({ username, onBack }) {
               </section>
 
               <div className="side">
-                <section className="card next">
+                <section
+                  className="card next journey-section"
+                  id="profile-issues"
+                  ref={(element) => {
+                    sectionRefs.current["profile-issues"] = element;
+                  }}
+                >
                   <h3 className="serif">Explore this profile</h3>
                   <p>
                     Browse @{profile.login}&apos;s public repositories on GitHub.
@@ -349,7 +361,13 @@ export default function ProfilePreview({ username, onBack }) {
                     </button>
                 </section>
 
-                <section className="card activity">
+                <section
+                  className="card activity journey-section"
+                  id="profile-contributions"
+                  ref={(element) => {
+                    sectionRefs.current["profile-contributions"] = element;
+                  }}
+                >
                   <div className="activity-head">
                     <b>Recent public repositories</b>
                     <span className="muted">{recentRepos.length}</span>

@@ -1,0 +1,543 @@
+
+
+.sidebar {
+  width: 278px;
+  height: 100vh;
+  background: #090909;
+  border-right: 1px solid #303030;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  padding: 32px 14px 24px 14px;
+
+  position: fixed;
+  left: 0;
+  top: 0;
+
+  box-sizing: border-box;
+  color: #e8e8e8;
+
+  font-family: "Courier New", monospace;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  padding-left: 42px;
+  margin-bottom: 48px;
+
+  font-family: Arial, sans-serif;
+  font-size: 17px;
+  font-weight: 700;
+  color: #f1f1f1;
+}
+
+.logo svg {
+  color: #ff6b2c;
+}
+
+.sidebar::before {
+  content: "YOUR JOURNEY";
+
+  position: absolute;
+  top: 108px;
+  left: 16px;
+
+  color: #eeeeee;
+
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 1px;
+}
+
+.journey {
+  position: relative;
+
+  margin-top: 28px;
+  padding-bottom: 20px;
+}
+
+.journey::before {
+  content: "";
+
+  position: absolute;
+
+  left: 19px;
+  top: 8px;
+  bottom: 20px;
+
+  width: 1px;
+
+  background: #414141;
+}
+
+.journey-item {
+  position: relative;
+
+  min-height: 75px;
+
+  display: flex;
+  align-items: flex-start;
+
+  padding: 0 8px 0 46px;
+
+  margin-bottom: 4px;
+
+  color: #666;
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.journey-item::before {
+  content: "";
+
+  position: absolute;
+
+  left: 12px;
+  top: 7px;
+
+  width: 13px;
+  height: 13px;
+
+  border: 2px solid #555;
+  border-radius: 50%;
+
+  background: #090909;
+
+  box-sizing: border-box;
+
+  z-index: 2;
+}
+
+.journey-item-content {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.journey-item-title {
+  font-family: "Courier New", monospace;
+
+  font-size: 15px;
+  font-weight: 600;
+
+  color: #777;
+
+  line-height: 1.2;
+}
+
+.journey-item-description {
+  font-size: 12px;
+
+  color: #454545;
+
+  line-height: 1.3;
+}
+
+.journey-item:hover .journey-item-title {
+  color: #bcbcbc;
+}
+
+.journey-item:hover::before {
+  border-color: #888;
+}
+
+
+.journey-item.active {
+  min-height: 58px;
+
+  margin-left: 0;
+  margin-right: 0;
+
+  padding-top: 12px;
+  padding-bottom: 12px;
+
+  border: 1px solid #a64f29;
+  border-radius: 11px;
+
+  background: rgba(255, 91, 36, 0.10);
+
+  color: #ff6b2c;
+}
+
+.journey-item.active::after {
+  content: "";
+
+  position: absolute;
+
+  left: 0;
+  top: 7px;
+  bottom: 7px;
+
+  width: 3px;
+
+  border-radius: 3px;
+
+  background: #ff6b2c;
+}
+
+.journey-item.active::before {
+  left: 11px;
+
+  width: 15px;
+  height: 15px;
+
+  border: 2px solid #ff6b2c;
+
+  background: #ff6b2c;
+
+  box-shadow: 0 0 0 3px #090909;
+}
+
+
+/* Active text */
+
+.journey-item.active .journey-item-title {
+  color: #ff6b2c;
+}
+
+.journey-item.active .journey-item-description {
+  color: #a95b3d;
+}
+
+.journey-item.completed::before {
+  border-color: #777;
+  background: #090909;
+}
+
+.journey-item.completed .journey-item-title {
+  color: #777;
+}
+
+.journey-item.completed .journey-item-description {
+  color: #4c4c4c;
+}
+
+
+.sidebar-bottom-text {
+  border-top: 1px solid #303030;
+
+  padding: 38px 12px 0;
+
+  margin-bottom: auto;
+  margin-top: 8px;
+}
+
+.sidebar-bottom-text h3 {
+  margin: 0;
+
+  color: #eeeeee;
+
+  font-family: "Courier New", monospace;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.sidebar-bottom-text p {
+  margin: 8px 0 0;
+
+  color: #555;
+
+  font-size: 12px;
+}
+
+.logout-btn {
+  width: 100%;
+
+  height: 54px;
+
+  border: 1px solid #a5522d;
+  border-radius: 10px;
+
+  background: rgba(255, 91, 36, 0.12);
+
+  color: #ff6b2c;
+
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+
+  gap: 12px;
+
+  padding-left: 22px;
+
+  font-family: "Courier New", monospace;
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: all 0.2s ease;
+}
+
+.logout-btn:hover {
+  background: rgba(255, 91, 36, 0.20);
+  border-color: #ff6b2c;
+}
+
+.logout-btn svg {
+  font-size: 18px;
+}
+
+.main-content {
+  margin-left: 278px;
+
+  min-height: 100vh;
+
+  background: #090909;
+}
+
+@media (max-width: 900px) {
+  .sidebar {
+    width: 230px;
+  }
+
+  .main-content {
+    margin-left: 230px;
+  }
+
+  .logo {
+    padding-left: 25px;
+  }
+}
+
+
+@media (max-width: 650px) {
+  .sidebar {
+    width: 75px;
+    padding: 25px 10px;
+  }
+
+  .logo {
+    padding-left: 0;
+    justify-content: center;
+  }
+
+  .logo span {
+    display: none;
+  }
+
+  .sidebar::before {
+    display: none;
+  }
+
+  .journey-item {
+    padding-left: 0;
+    justify-content: center;
+  }
+
+  .journey-item-content {
+    display: none;
+  }
+
+  .journey-item::before {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .journey::before {
+    left: 50%;
+  }
+
+  .sidebar-bottom-text {
+    display: none;
+  }
+
+  .logout-btn {
+    justify-content: center;
+    padding: 0;
+  }
+
+  .logout-btn span {
+    display: none;
+  }
+
+  .main-content {
+    margin-left: 75px;
+  }
+}
+.devpath-sidebar {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  width: 278px;
+  height: 100%;
+  min-height: 100vh;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 32px 14px 24px;
+  border-right: 1px solid #303030;
+  background: #090909;
+  color: #e8e8e8;
+  font-family: "Courier New", monospace;
+  box-sizing: border-box;
+}
+
+.devpath-sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 48px;
+  padding-left: 28px;
+  color: #f1f1f1;
+  font-family: Arial, sans-serif;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.devpath-sidebar-logo svg {
+  color: #ff6b2c;
+}
+
+.devpath-journey-label {
+  margin: 0 0 16px 4px;
+  color: #eee;
+  font-size: 12px;
+  letter-spacing: 1px;
+}
+
+.devpath-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.devpath-step {
+  display: flex;
+  width: 100%;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: #8d8d8d;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.devpath-step:hover,
+.devpath-step.active {
+  background: #2c1a12;
+  color: #f26a2e;
+}
+
+.devpath-step.active {
+  border-color: #f26a2e;
+  box-shadow: inset 3px 0 0 #f26a2e;
+}
+
+.devpath-step-icon {
+  margin-top: 3px;
+  font-size: 12px;
+}
+
+.devpath-step-title,
+.devpath-step-sub {
+  display: block;
+}
+
+.devpath-step-title {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.devpath-step-sub {
+  margin-top: 4px;
+  color: #777;
+  font-size: 10px;
+}
+
+.devpath-step.active .devpath-step-sub {
+  color: #b4532a;
+}
+
+.devpath-sidebar-divider {
+  border: 0;
+  border-top: 1px solid #3a3a3a;
+  margin: 32px 2px 22px;
+}
+
+.devpath-sidebar-tagline {
+  padding-left: 12px;
+  color: #eee;
+  font-size: 13px;
+}
+
+.devpath-sidebar-tagline span {
+  display: block;
+  margin-top: 6px;
+  color: #8d8d8d;
+  font-size: 11px;
+}
+
+.devpath-sidebar-logout {
+  display: flex;
+  width: 100%;
+  height: 46px;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border: 1px solid #f26a2e;
+  border-radius: 6px;
+  background: #2a160e;
+  color: #f26a2e;
+  font: inherit;
+  cursor: pointer;
+}
+
+.devpath-sidebar-logout:focus-visible,
+.devpath-step:focus-visible {
+  outline: 2px solid #f26a2e;
+  outline-offset: 3px;
+}
+
+@media (max-width: 900px) {
+  .devpath-sidebar {
+    width: 230px;
+  }
+
+  .devpath-sidebar-logo {
+    padding-left: 16px;
+  }
+}
+
+@media (max-width: 650px) {
+  .devpath-sidebar {
+    width: 75px;
+    padding: 25px 8px;
+  }
+
+  .devpath-sidebar-logo {
+    justify-content: center;
+    padding-left: 0;
+  }
+
+  .devpath-sidebar-logo span,
+  .devpath-journey-label,
+  .devpath-step-title,
+  .devpath-step-sub,
+  .devpath-sidebar-divider,
+  .devpath-sidebar-tagline {
+    display: none;
+  }
+
+  .devpath-step {
+    justify-content: center;
+    padding: 10px 4px;
+  }
+
+  .devpath-sidebar-logout {
+    height: 42px;
+    font-size: 0;
+  }
+}

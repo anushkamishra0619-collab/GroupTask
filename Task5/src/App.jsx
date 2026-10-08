@@ -1,18 +1,59 @@
 import { useState } from "react";
 import Hero from "./Componenets/Navbar.jsx/hero.jsx";
+import AnalyzeProfile from "./Componenets/Navbar.jsx/AnalyzeProfile.jsx";
 import ProfilePreview from "./Componenets/Navbar.jsx/ProfilePreview.jsx";
+import IssueExplorer from "./Componenets/Navbar.jsx/IssueExplorer.jsx";
 
 export default function App() {
+  const [view, setView] = useState("hero");
   const [analyzedUsername, setAnalyzedUsername] = useState("");
 
-  if (analyzedUsername) {
+  const handleAnalyze = (username) => {
+    setAnalyzedUsername(username);
+    setView("analyze");
+  };
+
+  const returnToHero = () => {
+    setView("hero");
+    setAnalyzedUsername("");
+  };
+
+  const handleJourneySelect = (index) => {
+    if (index === 0) setView("analyze");
+    if (index === 1) setView("preview");
+    if (index === 2) setView("issues");
+  };
+
+  if (view === "analyze") {
     return (
-      <ProfilePreview
+      <AnalyzeProfile
         username={analyzedUsername}
-        onBack={() => setAnalyzedUsername("")}
+        onJourneySelect={handleJourneySelect}
+        onBack={returnToHero}
       />
     );
   }
 
-  return <Hero onAnalyze={setAnalyzedUsername} />;
+  if (view === "preview") {
+    return (
+      <ProfilePreview
+        username={analyzedUsername}
+        onBack={() => setView("analyze")}
+        onLogout={returnToHero}
+        onJourneySelect={handleJourneySelect}
+      />
+    );
+  }
+
+  if (view === "issues") {
+    return (
+      <IssueExplorer
+        username={analyzedUsername}
+        onJourneySelect={handleJourneySelect}
+        onLogout={returnToHero}
+      />
+    );
+  }
+
+  return <Hero onAnalyze={handleAnalyze} />;
 }
