@@ -94,7 +94,7 @@ export default function ProfilePreview({
       return;
     }
 
-    if (index === 2 && onJourneySelect) {
+    if ((index === 2 || index === 3) && onJourneySelect) {
       onJourneySelect(index);
       return;
     }

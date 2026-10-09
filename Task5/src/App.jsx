@@ -3,6 +3,7 @@ import Hero from "./Componenets/Navbar.jsx/hero.jsx";
 import AnalyzeProfile from "./Componenets/Navbar.jsx/AnalyzeProfile.jsx";
 import ProfilePreview from "./Componenets/Navbar.jsx/ProfilePreview.jsx";
 import IssueExplorer from "./Componenets/Navbar.jsx/IssueExplorer.jsx";
+import TrackContributions from "./Componenets/Navbar.jsx/TrackContributions.jsx";
 
 export default function App() {
   const [view, setView] = useState("hero");
@@ -22,6 +23,7 @@ export default function App() {
     if (index === 0) setView("analyze");
     if (index === 1) setView("preview");
     if (index === 2) setView("issues");
+    if (index === 3) setView("contributions");
   };
 
   if (view === "analyze") {
@@ -48,6 +50,15 @@ export default function App() {
     return (
       <IssueExplorer
         username={analyzedUsername}
+        onJourneySelect={handleJourneySelect}
+        onLogout={returnToHero}
+      />
+    );
+  }
+
+  if (view === "contributions") {
+    return (
+      <TrackContributions
         onJourneySelect={handleJourneySelect}
         onLogout={returnToHero}
       />
