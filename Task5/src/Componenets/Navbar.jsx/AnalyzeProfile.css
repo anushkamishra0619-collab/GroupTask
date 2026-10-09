@@ -24,6 +24,11 @@
   color: #ddd;
   font-family: "DM Mono", monospace;
 }
+.analysis-breadcrumb span:last-child,
+.analysis-breadcrumb .issue-repository-name {
+  color: #fff;
+}
+
 
 .analysis-breadcrumb {
   display: flex;
