@@ -106,9 +106,6 @@ const AnalyzeProfile = ({
 
           <div className="signal-content">
 
-
-            {/* ===== PROGRESS ===== */}
-
             <div className="progress-area">
 
               <div className="progress-circle">

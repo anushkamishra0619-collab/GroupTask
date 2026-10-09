@@ -1,105 +1,74 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import JourneySidebar from "./JourneySidebar";
 import journey from "./journey";
 import "./ProfileSkills.css";
 
-const githubProfileRequests = new Map();
+const profile = {
+  name: "The Octocat",
+  login: "octocat",
+  bio: "GitHub's mascot, wearing an octocat suit.",
+  public_repos: 5,
+  followers: 24000,
+  following: 9,
+  html_url: "https://github.com/octocat",
+};
 
-function createGitHubError(response) {
-  if (response.status === 404) {
-    return new Error("No GitHub user with that username was found.");
-  }
-
-  if (response.status === 403 || response.status === 429) {
-    const resetAt = Number(response.headers.get("x-ratelimit-reset"));
-    const retryTime = Number.isFinite(resetAt) && resetAt > 0
-      ? ` Try again after ${new Date(resetAt * 1000).toLocaleTimeString([], {
-          hour: "numeric",
-          minute: "2-digit",
-        })}.`
-      : " Please try again later.";
-
-    return new Error(`GitHub's public API rate limit was reached.${retryTime}`);
-  }
-
-  return new Error("GitHub profile data could not be loaded. Please try again.");
-}
-
-async function requestGitHubData(username) {
-  const headers = { Accept: "application/vnd.github+json" };
-  const [userResponse, reposResponse] = await Promise.all([
-    fetch(`https://api.github.com/users/${encodeURIComponent(username)}`, {
-      headers,
-    }),
-    fetch(
-      `https://api.github.com/users/${encodeURIComponent(username)}/repos?per_page=100&sort=updated`,
-      { headers },
-    ),
-  ]);
-
-  if (!userResponse.ok || !reposResponse.ok) {
-    const response = !userResponse.ok ? userResponse : reposResponse;
-    throw createGitHubError(response);
-  }
-
-  return {
-    user: await userResponse.json(),
-    repos: await reposResponse.json(),
-  };
-}
-
-function fetchGitHubData(username) {
-  const requestKey = username.trim().toLowerCase();
-  const cachedRequest = githubProfileRequests.get(requestKey);
-  if (cachedRequest) return cachedRequest;
-
-  const request = requestGitHubData(username).catch((error) => {
-    githubProfileRequests.delete(requestKey);
-    throw error;
-  });
-
-  githubProfileRequests.set(requestKey, request);
-  return request;
-}
+const repos = [
+  {
+    id: 1,
+    name: "Hello-World",
+    description: "A repository for testing GitHub workflows.",
+    language: "Ruby",
+    stargazers_count: 2400,
+    fork: false,
+    html_url: "https://github.com/octocat/Hello-World",
+  },
+  {
+    id: 2,
+    name: "Spoon-Knife",
+    description: "A practical repository for learning forks and pull requests.",
+    language: "HTML",
+    stargazers_count: 12000,
+    fork: false,
+    html_url: "https://github.com/octocat/Spoon-Knife",
+  },
+  {
+    id: 3,
+    name: "git-consortium",
+    description: "A small repository demonstrating Git collaboration.",
+    language: "Shell",
+    stargazers_count: 180,
+    fork: false,
+    html_url: "https://github.com/octocat/git-consortium",
+  },
+  {
+    id: 4,
+    name: "octocat.github.io",
+    description: "A sample GitHub Pages site.",
+    language: "HTML",
+    stargazers_count: 90,
+    fork: false,
+    html_url: "https://github.com/octocat/octocat.github.io",
+  },
+  {
+    id: 5,
+    name: "boysenberry-repo-1",
+    description: "A sample project from the Octocat profile.",
+    language: "CSS",
+    stargazers_count: 55,
+    fork: false,
+    html_url: "https://github.com/octocat/boysenberry-repo-1",
+  },
+];
 
 export default function ProfilePreview({
-  username,
   onBack,
   onLogout = onBack,
   onJourneySelect,
 }) {
-  const [profile, setProfile] = useState(null);
-  const [repos, setRepos] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
   const [activeJourney, setActiveJourney] = useState(1);
-  const [retryCount, setRetryCount] = useState(0);
   const [showRepositories, setShowRepositories] = useState(false);
   const sectionRefs = useRef({});
-
-  useEffect(() => {
-    let isCurrentRequest = true;
-
-    fetchGitHubData(username)
-      .then(({ user, repos: userRepos }) => {
-        if (isCurrentRequest) {
-          setProfile(user);
-          setRepos(userRepos);
-        }
-      })
-      .catch((fetchError) => {
-        if (isCurrentRequest) {
-          setError(fetchError.message);
-        }
-      })
-      .finally(() => {
-        if (isCurrentRequest) setLoading(false);
-      });
-
-    return () => {
-      isCurrentRequest = false;
-    };
-  }, [username, retryCount]);
 
   const languages = repos.reduce((counts, repo) => {
     if (repo.language) {
@@ -143,9 +112,9 @@ export default function ProfilePreview({
   };
 
   const stats = [
-    { label: "Repositories", value: profile?.public_repos ?? "—", unit: "public" },
-    { label: "Followers", value: profile?.followers ?? "—", unit: "on GitHub" },
-    { label: "Following", value: profile?.following ?? "—", unit: "accounts" },
+    { label: "Repositories", value: profile.public_repos, unit: "public" },
+    { label: "Followers", value: profile.followers, unit: "on GitHub" },
+    { label: "Following", value: profile.following, unit: "accounts" },
     { label: "Languages", value: Object.keys(languages).length, unit: "detected" },
   ];
 
@@ -167,12 +136,12 @@ export default function ProfilePreview({
           <i /> Developer profile
         </span>
         <h1 className="title">
-          {showRepositories ? `@${profile?.login || username}'s repositories` : profile?.name || `@${username}`}
+          {showRepositories ? `@${profile.login}'s repositories` : profile.name}
         </h1>
         <p className="subtitle">
           {showRepositories
-            ? `Public repositories for @${profile?.login || username}.`
-            : `Public GitHub profile insights for @${username}.`}
+            ? `Sample repositories for @${profile.login}.`
+            : `Static sample GitHub profile for @${profile.login}.`}
         </p>
 
         <section className="journey-description" aria-live="polite">
@@ -180,32 +149,7 @@ export default function ProfilePreview({
           <p>{journey[activeJourney].description}</p>
         </section>
 
-        {loading && (
-          <p className="profile-message" role="status">
-            Loading GitHub profile for @{username}…
-          </p>
-        )}
-
-        {error && (
-          <section className="profile-message profile-error" role="alert">
-            <strong>Could not load this profile</strong>
-            <p>{error}</p>
-            <button
-              className="retry-button"
-              type="button"
-              onClick={() => {
-                setLoading(true);
-                setError("");
-                setRetryCount((count) => count + 1);
-              }}
-            >
-              Try again
-            </button>
-          </section>
-        )}
-
-        {!loading && !error && profile && (
-          <>
+        <>
             {showRepositories ? (
               <section className="card repositories-page">
                 <div className="repositories-page-head">
@@ -226,8 +170,7 @@ export default function ProfilePreview({
                   </a>
                 </div>
                 <p className="muted small">
-                  Showing {repos.length} of {profile.public_repos} public repositories
-                  (up to 100, sorted by recently updated).
+                  Showing {repos.length} sample public repositories.
                 </p>
                 {repos.length ? (
                   <ul className="repository-list repositories-page-list">
@@ -264,7 +207,7 @@ export default function ProfilePreview({
               }}
             >
               <div className="user">
-                <img className="avatar profile-avatar" src={profile.avatar_url} alt="" />
+                <div className="avatar profile-avatar" aria-hidden="true">O</div>
                 <div>
                   <div className="username">@{profile.login}</div>
                   <div className="muted small">
@@ -303,7 +246,7 @@ export default function ProfilePreview({
               >
                 <h2 className="card-title">LANGUAGES FOUND</h2>
                 <p className="muted small">
-                  Based on the primary language of up to 100 recently updated public repositories.
+                  Based on the primary language of the sample repositories shown here.
                 </p>
                 {topLanguages.length ? (
                   <ul className="skill-list">
@@ -369,7 +312,7 @@ export default function ProfilePreview({
                   }}
                 >
                   <div className="activity-head">
-                    <b>Recent public repositories</b>
+                    <b>Sample public repositories</b>
                     <span className="muted">{recentRepos.length}</span>
                   </div>
                   {recentRepos.length ? (
@@ -397,8 +340,7 @@ export default function ProfilePreview({
             </div>
               </>
             )}
-          </>
-        )}
+        </>
       </main>
     </div>
   );

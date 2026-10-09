@@ -37,7 +37,6 @@ export default function App() {
   if (view === "preview") {
     return (
       <ProfilePreview
-        username={analyzedUsername}
         onBack={() => setView("analyze")}
         onLogout={returnToHero}
         onJourneySelect={handleJourneySelect}
