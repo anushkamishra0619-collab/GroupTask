@@ -81,7 +81,31 @@ body {
 }
 .dp-form {
   max-width: 665px;
-  margin-left: 40px;
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.dp-label {
+  display: block;
+  font-size: 18px;
+  margin-bottom: 14px;
+  text-align: center;
+}
+
+.dp-privacy {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  max-width: 600px;
+  margin: 10px 0 0;
+  font-size: 12.5px;
+  color: var(--dp-muted);
+  text-align: left;
 }
 .dp-label {
   display: block;

@@ -9,12 +9,6 @@
   overflow: hidden;
   background: #080808;
 }
-.analysis-breadcrumb span:last-child,
-.analysis-breadcrumb .issue-repository-name {
-  color:white;
-
-}
-
 
 .analyze-profile {
   grid-column: 2;

@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { VscGithub } from "react-icons/vsc";
 
 
@@ -64,18 +63,10 @@ const features = [
 ];
 
 export default function DevPathHero({ onAnalyze }) {
-  const [username, setUsername] = useState("");
-
-  const handleAnalyze = () => {
-    const clean = username.trim().replace(/^@/, "");
-    if (!clean) return;
-    onAnalyze(clean);
-  };
-
   return (
     <main className="dp">
       <header className="dp-nav">
-       < VscGithub size={22} />
+       <VscGithub size={22} />
 
         <span className="dp-brand">DevPath</span>
       </header>
@@ -115,30 +106,14 @@ export default function DevPathHero({ onAnalyze }) {
           </div>
 
           <div className="dp-form">
-            <label htmlFor="gh-user" className="dp-label">
-              GitHub username
-            </label>
-            <div className="dp-row">
-              <div className="dp-input">
-                <GithubIcon />
-                <input
-                  id="gh-user"
-                  type="text"
-                  placeholder="@your-username"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && handleAnalyze()}
-                  autoComplete="off"
-                  spellCheck="false"
-                />
-              </div>
-              <button type="button" className="dp-btn" onClick={handleAnalyze}>
-                Analyze profile
-              </button>
-            </div>
+            <p className="dp-label">Connect your GitHub account</p>
+            <button type="button" className="dp-btn" onClick={onAnalyze}>
+              <VscGithub size={21} />
+              Continue with GitHub
+            </button>
             <p className="dp-privacy">
               <LockIcon />
-              We analyze public repositories only.
+              Sign in securely. Your profile details will be fetched by DevPath after authorization.
             </p>
           </div>
           <div className="dp-note dp-note-right" aria-hidden="true">

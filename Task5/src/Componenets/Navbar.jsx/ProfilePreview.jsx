@@ -1,74 +1,68 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import JourneySidebar from "./JourneySidebar";
 import journey from "./journey";
+import { getProfile, getRepositories } from "../../services/api.js";
 import "./ProfileSkills.css";
 
-const profile = {
-  name: "The Octocat",
-  login: "octocat",
-  bio: "GitHub's mascot, wearing an octocat suit.",
-  public_repos: 5,
-  followers: 24000,
-  following: 9,
-  html_url: "https://github.com/octocat",
-};
-
-const repos = [
-  {
-    id: 1,
-    name: "Hello-World",
-    description: "A repository for testing GitHub workflows.",
-    language: "Ruby",
-    stargazers_count: 2400,
-    fork: false,
-    html_url: "https://github.com/octocat/Hello-World",
-  },
-  {
-    id: 2,
-    name: "Spoon-Knife",
-    description: "A practical repository for learning forks and pull requests.",
-    language: "HTML",
-    stargazers_count: 12000,
-    fork: false,
-    html_url: "https://github.com/octocat/Spoon-Knife",
-  },
-  {
-    id: 3,
-    name: "git-consortium",
-    description: "A small repository demonstrating Git collaboration.",
-    language: "Shell",
-    stargazers_count: 180,
-    fork: false,
-    html_url: "https://github.com/octocat/git-consortium",
-  },
-  {
-    id: 4,
-    name: "octocat.github.io",
-    description: "A sample GitHub Pages site.",
-    language: "HTML",
-    stargazers_count: 90,
-    fork: false,
-    html_url: "https://github.com/octocat/octocat.github.io",
-  },
-  {
-    id: 5,
-    name: "boysenberry-repo-1",
-    description: "A sample project from the Octocat profile.",
-    language: "CSS",
-    stargazers_count: 55,
-    fork: false,
-    html_url: "https://github.com/octocat/boysenberry-repo-1",
-  },
-];
+async function fetchBackendGitHubData() {
+  const [profileResponse, reposResponse] = await Promise.all([getProfile(), getRepositories()]);
+  const rawProfile = profileResponse?.data ?? profileResponse?.profile ?? profileResponse;
+  const rawRepos = reposResponse?.data ?? reposResponse?.repositories ?? reposResponse;
+  const profile = {
+    ...rawProfile,
+    login: rawProfile?.username || rawProfile?.login,
+    html_url: rawProfile?.profileUrl || rawProfile?.html_url,
+    public_repos: rawProfile?.publicRepos ?? rawProfile?.public_repos,
+    avatar_url: rawProfile?.avatar || rawProfile?.avatarUrl || rawProfile?.avatar_url,
+  };
+  const repos = (Array.isArray(rawRepos) ? rawRepos : []).map((repo) => ({
+    ...repo,
+    id: repo.id || repo.githubId || repo._id,
+    html_url: repo.url || repo.html_url,
+    stargazers_count: repo.stars ?? repo.stargazers_count ?? 0,
+    updated_at: repo.updatedAt || repo.updated_at,
+  }));
+  return { user: profile, repos };
+}
 
 export default function ProfilePreview({
+  username = "",
   onBack,
   onLogout = onBack,
   onJourneySelect,
 }) {
+  const [profile, setProfile] = useState(null);
+  const [repos, setRepos] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const [activeJourney, setActiveJourney] = useState(1);
+  const [retryCount, setRetryCount] = useState(0);
   const [showRepositories, setShowRepositories] = useState(false);
   const sectionRefs = useRef({});
+
+  useEffect(() => {
+    let isCurrentRequest = true;
+
+    fetchBackendGitHubData()
+      .then(({ user, repos: userRepos }) => {
+        if (isCurrentRequest) {
+          setProfile(user);
+          setRepos(userRepos);
+        }
+      })
+      .catch((fetchError) => {
+        if (isCurrentRequest) {
+          setError(fetchError.message);
+        }
+      })
+      .finally(() => {
+        if (isCurrentRequest) setLoading(false);
+      });
+
+    return () => {
+      isCurrentRequest = false;
+    };
+  }, [retryCount]);
 
   const languages = repos.reduce((counts, repo) => {
     if (repo.language) {
@@ -76,10 +70,8 @@ export default function ProfilePreview({
     }
     return counts;
   }, {});
-  const topLanguages = Object.entries(languages)
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 5);
-  const maxLanguageCount = topLanguages[0]?.[1] || 1;
+  // These are the ML-extracted skills saved on the authenticated user's MongoDB document.
+  const mlSkills = Array.isArray(profile?.skills) ? profile.skills : [];
   const recentRepos = repos
     .filter((repo) => !repo.fork)
     .slice(0, 5);
@@ -112,9 +104,9 @@ export default function ProfilePreview({
   };
 
   const stats = [
-    { label: "Repositories", value: profile.public_repos, unit: "public" },
-    { label: "Followers", value: profile.followers, unit: "on GitHub" },
-    { label: "Following", value: profile.following, unit: "accounts" },
+    { label: "Repositories", value: profile?.public_repos ?? "—", unit: "public" },
+    { label: "Followers", value: profile?.followers ?? "—", unit: "on GitHub" },
+    { label: "Following", value: profile?.following ?? "—", unit: "accounts" },
     { label: "Languages", value: Object.keys(languages).length, unit: "detected" },
   ];
 
@@ -136,12 +128,12 @@ export default function ProfilePreview({
           <i /> Developer profile
         </span>
         <h1 className="title">
-          {showRepositories ? `@${profile.login}'s repositories` : profile.name}
+          {showRepositories ? `@${profile?.login || username || "your"}'s repositories` : profile?.name || `@${username}`}
         </h1>
         <p className="subtitle">
           {showRepositories
-            ? `Sample repositories for @${profile.login}.`
-            : `Static sample GitHub profile for @${profile.login}.`}
+            ? `Repositories for @${profile?.login || username || "your GitHub account"}.`
+            : `GitHub profile insights for @${profile?.login || username || "your account"}.`}
         </p>
 
         <section className="journey-description" aria-live="polite">
@@ -149,7 +141,32 @@ export default function ProfilePreview({
           <p>{journey[activeJourney].description}</p>
         </section>
 
-        <>
+        {loading && (
+          <p className="profile-message" role="status">
+            Loading your GitHub profile…
+          </p>
+        )}
+
+        {error && (
+          <section className="profile-message profile-error" role="alert">
+            <strong>Could not load this profile</strong>
+            <p>{error}</p>
+            <button
+              className="retry-button"
+              type="button"
+              onClick={() => {
+                setLoading(true);
+                setError("");
+                setRetryCount((count) => count + 1);
+              }}
+            >
+              Try again
+            </button>
+          </section>
+        )}
+
+        {!loading && !error && profile && (
+          <>
             {showRepositories ? (
               <section className="card repositories-page">
                 <div className="repositories-page-head">
@@ -170,7 +187,8 @@ export default function ProfilePreview({
                   </a>
                 </div>
                 <p className="muted small">
-                  Showing {repos.length} sample public repositories.
+                  Showing {repos.length} of {profile.public_repos} public repositories
+                  (up to 100, sorted by recently updated).
                 </p>
                 {repos.length ? (
                   <ul className="repository-list repositories-page-list">
@@ -207,9 +225,9 @@ export default function ProfilePreview({
               }}
             >
               <div className="user">
-                <div className="avatar profile-avatar" aria-hidden="true">O</div>
+                <img className="avatar profile-avatar" src={profile.avatar_url || profile.avatar} alt="" />
                 <div>
-                  <div className="username">@{profile.login}</div>
+                  <div className="username">@{profile.login || profile.username}</div>
                   <div className="muted small">
                     {profile.bio || "No public bio provided"}
                   </div>
@@ -244,33 +262,32 @@ export default function ProfilePreview({
                   sectionRefs.current["profile-skills"] = element;
                 }}
               >
-                <h2 className="card-title">LANGUAGES FOUND</h2>
+                <h2 className="card-title">SKILLS IDENTIFIED BY ML</h2>
                 <p className="muted small">
-                  Based on the primary language of the sample repositories shown here.
+                  Technologies inferred by DevPath from your analyzed repositories.
                 </p>
-                {topLanguages.length ? (
+                {mlSkills.length ? (
                   <ul className="skill-list">
-                    {topLanguages.map(([language, count]) => {
-                      const percentage = Math.round((count / maxLanguageCount) * 100);
+                    {mlSkills.map((skill, index) => {
+                      const item = typeof skill === "string" ? { name: skill } : skill;
+                      const rawConfidence = Number(item.confidence);
+                      const confidence = Number.isFinite(rawConfidence)
+                        ? Math.max(0, Math.min(100, Math.round(rawConfidence <= 1 ? rawConfidence * 100 : rawConfidence)))
+                        : null;
+                      const evidence = Array.isArray(item.evidence) ? item.evidence.filter(Boolean) : [];
+
                       return (
-                        <li className="skill" key={language}>
-                          <div className="badge">{language.slice(0, 3)}</div>
+                        <li className="skill" key={`${item.name || "skill"}-${index}`}>
+                          <div className="badge">{String(item.name || "?").slice(0, 3).toUpperCase()}</div>
                           <div className="skill-body">
                             <div className="skill-head">
-                              <span className="skill-name">{language}</span>
-                              <span className="tag orange">
-                                {count} {count === 1 ? "REPOSITORY" : "REPOSITORIES"}
-                              </span>
+                              <span className="skill-name">{item.name || "Unnamed skill"}</span>
+                              {confidence !== null && <span className="tag orange">{confidence}% CONFIDENCE</span>}
                             </div>
-                            <div className="bar-row">
-                              <div className="bar">
-                                <div
-                                  className="fill orange"
-                                  style={{ width: `${percentage}%` }}
-                                />
-                              </div>
-                              <span className="pct">{count}</span>
-                            </div>
+                            {evidence.length > 0 && (
+                              <p className="muted small">Evidence: {evidence.slice(0, 3).join(", ")}</p>
+                            )}
+                            {item.source && <p className="muted small">Source: {item.source}</p>}
                           </div>
                         </li>
                       );
@@ -278,7 +295,7 @@ export default function ProfilePreview({
                   </ul>
                 ) : (
                   <p className="empty-message">
-                    No primary languages were reported for this user's public repositories.
+                    No ML-extracted skills were returned by the backend yet. Confirm that repository analysis has completed, then reload this page.
                   </p>
                 )}
               </section>
@@ -293,7 +310,7 @@ export default function ProfilePreview({
                 >
                   <h3 className="serif">Explore this profile</h3>
                   <p>
-                    Browse @{profile.login}&apos;s public repositories on GitHub.
+                    Browse @{profile.login || profile.username}&apos;s public repositories on GitHub.
                   </p>
                     <button
                       className="cta repository-cta"
@@ -312,7 +329,7 @@ export default function ProfilePreview({
                   }}
                 >
                   <div className="activity-head">
-                    <b>Sample public repositories</b>
+                    <b>Recent public repositories</b>
                     <span className="muted">{recentRepos.length}</span>
                   </div>
                   {recentRepos.length ? (
@@ -340,7 +357,8 @@ export default function ProfilePreview({
             </div>
               </>
             )}
-        </>
+          </>
+        )}
       </main>
     </div>
   );
