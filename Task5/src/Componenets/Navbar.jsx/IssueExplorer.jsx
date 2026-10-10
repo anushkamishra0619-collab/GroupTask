@@ -5,6 +5,8 @@ import {
   FiArrowRight,
 } from "react-icons/fi";
 import JourneySidebar from "./JourneySidebar";
+import { useEffect, useState } from "react";
+import { getRecommendedIssues } from "../../services/api.js";
 import "./IssueExplorer.css";
 
 export default function IssueExplorer({
@@ -12,6 +14,48 @@ export default function IssueExplorer({
   onJourneySelect,
   onLogout,
 }) {
+
+  const [issues, setIssues] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [search, setSearch] = useState("");
+
+  async function loadIssues() {
+    try {
+      setLoading(true);
+      setError("");
+
+      const response = await getRecommendedIssues();
+
+      setIssues(
+        response?.data?.issues ??
+        response?.issues ??
+        []
+      );
+    } catch (err) {
+      setError(err.message || "Failed to load recommended issues.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    loadIssues();
+  }, []);
+
+  const filteredIssues = issues.filter((issue) => {
+    const query = search.toLowerCase();
+
+    return [
+      issue.title,
+      issue.repositoryFullName,
+      issue.description,
+      ...(issue.labels || []),
+      ...(issue.matchedSkills || []),
+    ]
+      .filter(Boolean)
+      .some((value) => String(value).toLowerCase().includes(query));
+  });
   return (
     <div className="issue-explorer-layout">
       <JourneySidebar
@@ -22,245 +66,185 @@ export default function IssueExplorer({
       <div className="issue-page">
         <header className="issue-navbar">
 
-        <div className="issue-breadcrumb">
-          <span>DevPath</span>
-          <b>/</b>
-          <span>Explore issues</span>
-          <b>/</b>
-          <span className="issue-repository-name">open-source/ui-kit</span>
-          <b>/</b>
-          <span>#482</span>
-        </div>
-
-        <div className="navbar-right">
-
-          <div className="search-box">
-            <FiSearch />
-            <input placeholder="Search..." />
+          <div className="issue-breadcrumb">
+            <span>DevPath</span>
+            <b>/</b>
+            <span>Explore issues</span>
+            <b>/</b>
+            <span className="issue-repository-name">open-source/ui-kit</span>
+            <b>/</b>
+            <span>#482</span>
           </div>
 
-          <FiBell className="bell-icon" />
+          <div className="navbar-right">
 
-          <div className="profile">
-            <div className="issue-avatar">{username.charAt(0).toUpperCase() || "M"}</div>
-
-            <div>
-              <strong>{username}</strong>
-              <small>Student Developer</small>
+            <div className="search-box">
+              <FiSearch />
+              <input placeholder="Search..." />
             </div>
-          </div>
 
-        </div>
+            <FiBell className="bell-icon" />
+
+            <div className="profile">
+              <div className="issue-avatar">{username.charAt(0).toUpperCase() || "M"}</div>
+
+              <div>
+                <strong>{username}</strong>
+                <small>Student Developer</small>
+              </div>
+            </div>
+
+          </div>
         </header>
 
-      <main className="issue-main">
+        <main className="issue-main">
+          <div className="issue-label">
+            <span>•</span>
+            PERSONALIZED ISSUE RECOMMENDATIONS
+          </div>
 
-        {/* Label */}
-        <div className="issue-label">
-          <span>•</span>
-          ISSUES EXPLORER
-        </div>
-        <section className="issue-header">
-
-          <div>
-            <h1>Add dark mode to settings</h1>
-
-            <div className="issue-status">
-              <span className="open-dot"></span>
-              <b>Open</b>
-
-              <span>Opened 2 days ago by ui-maintainer.</span>
-              <span>12 comments.</span>
-              <span>Last activity yesterday</span>
+          <section className="issue-header">
+            <div>
+              <h1>Issues picked for your skills.</h1>
+              <p className="issue-subtitle">
+                Ranked using your GitHub profile and ML skill matching.
+              </p>
             </div>
-          </div>
 
-          <div className="issue-actions">
-            <button className="save-btn">
-              Save
+            <button
+              className="save-btn"
+              onClick={loadIssues}
+              disabled={loading}
+            >
+              {loading ? "Loading..." : "Refresh"}
             </button>
+          </section>
 
-            <a href="#github">
-              Open in GitHub <FiExternalLink />
-            </a>
+          <div className="issue-search">
+            <FiSearch />
+            <input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search issues, repositories, or skills..."
+            />
           </div>
 
-        </section>
-        <div className="issue-tags">
+          {loading && (
+            <p className="issue-message" role="status">
+              Finding issues matched to your skills...
+            </p>
+          )}
 
-          <span>
-            <i></i>
-            React
-          </span>
+          {error && (
+            <div className="issue-message issue-error" role="alert">
+              <p>{error}</p>
+              <button className="save-btn" onClick={loadIssues}>
+                Try again
+              </button>
+            </div>
+          )}
 
-          <span>
-            <i></i>
-            CSS
-          </span>
-
-          <span>
-            <i></i>
-            Good first issue
-          </span>
-
-        </div>
-        <div className="orange-line"></div>
-        <div className="issue-content">
-          <section className="issue-left">
-
-            <h2>Why this fits you</h2>
-
-
-            <FitRow
-              title="REACT"
-              heading="Used in 3 days of your repositories"
-              description="campus-app, portfolio-site and event planner all use React with hooks and context."
-            />
-
-            <FitRow
-              title="CSS"
-              heading="Present in 2 repositories"
-              description="Custom properties and responsive layout in portfolio-site and landing-kit."
-            />
-
-            <FitRow
-              title="SCOPE"
-              heading="Small, well-defined change"
-              description="The maintainer has replied to every contributor within a day."
-            />
-            <div className="description-section">
-
-              <h2>Description</h2>
-
+          {!loading && !error && filteredIssues.length === 0 && (
+            <div className="issue-message">
+              <h2>No recommendations found</h2>
               <p>
-                The settings screens only support a light theme. Add a toggle
-                that lets users choose light, dark or system, and apply the
-                choice across every settings component. The theme should follow
-                the operating system on first load and remember the user's
-                selection afterwards.
+                {issues.length
+                  ? "Try a different search."
+                  : "Analyze your GitHub repositories and skills first, then refresh."}
+              </p>
+            </div>
+          )}
+
+          {!loading && !error && filteredIssues.length > 0 && (
+            <>
+              <p className="issue-results-count">
+                {filteredIssues.length} recommended issue
+                {filteredIssues.length !== 1 ? "s" : ""}
               </p>
 
+              <section className="recommended-issues">
+                {filteredIssues.map((issue) => (
+                  <article
+                    className="recommended-issue-card"
+                    key={issue.githubId}
+                  >
+                    <div className="recommended-issue-top">
+                      <span className="issue-open-badge">
+                        <span className="open-dot" />
+                        {issue.state || "open"}
+                      </span>
 
-              <h3>Acceptance Criteria</h3>
+                      <span className="issue-score">
+                        {issue.relevanceScore ?? 0}% match
+                      </span>
+                    </div>
 
-              <ul>
-                <li>
-                  The toggle in Settings switches between light, dark and
-                  system themes.
-                </li>
+                    <h2>{issue.title}</h2>
 
-                <li>
-                  The selection persists across sessions.
-                </li>
+                    <p className="issue-repo">
+                      {issue.repositoryFullName || "GitHub repository"}
+                      {issue.language ? ` · ${issue.language}` : ""}
+                    </p>
 
-                <li>
-                  All settings components read colors from the shared theme
-                  tokens.
-                </li>
+                    <p className="recommended-issue-description">
+                      {issue.description?.trim()
+                        ? issue.description.slice(0, 350)
+                        : "No description provided."}
+                      {issue.description?.length > 350 ? "..." : ""}
+                    </p>
 
-                <li>
-                  The settings side panels support this option.
-                </li>
-              </ul>
+                    {issue.matchedSkills?.length > 0 && (
+                      <div className="issue-tags">
+                        {issue.matchedSkills.map((skill) => (
+                          <span key={skill}>
+                            <i />
+                            {skill}
+                          </span>
+                        ))}
+                      </div>
+                    )}
 
-            </div>
-            <div className="files-section">
+                    {issue.labels?.length > 0 && (
+                      <div className="issue-label-list">
+                        {issue.labels.map((label) => (
+                          <span key={label}>{label}</span>
+                        ))}
+                      </div>
+                    )}
 
-              <h3>Files likely to change</h3>
+                    {issue.recommendationReason && (
+                      <div className="issue-reason">
+                        <strong>Why this fits you</strong>
+                        <p>{issue.recommendationReason}</p>
+                      </div>
+                    )}
 
-              <div className="file-row">
-                <code>src/components/Settings/ThemeToggle.tsx</code>
-                <span>New Component</span>
-                <b>Add</b>
-              </div>
+                    {issue.missingSkills?.length > 0 && (
+                      <p className="issue-missing-skills">
+                        Skills to explore: {issue.missingSkills.join(", ")}
+                      </p>
+                    )}
 
-              <div className="file-row">
-                <code>src/hooks/useTheme.ts</code>
-                <span>Reads and stores preference</span>
-                <b>Add</b>
-              </div>
+                    <div className="recommended-issue-footer">
+                      <span>
+                        {issue.comments ?? 0} comments
+                      </span>
 
-              <div className="file-row">
-                <code>src/styles/tokens.css</code>
-                <span>Dark color tokens</span>
-                <span>Edit</span>
-              </div>
+                      <a
+                        href={issue.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Open on GitHub <FiExternalLink />
+                      </a>
+                    </div>
+                  </article>
+                ))}
+              </section>
+            </>
+          )}
+        </main>
 
-              <div className="file-row">
-                <code>docs/theming.md</code>
-                <span>Usage note</span>
-                <span>Edit</span>
-              </div>
-
-            </div>
-
-          </section>
-          <aside className="issue-right">
-
-            <h2>Details</h2>
-
-            <Detail label="Difficulty" value="Beginner" />
-            <Detail label="Estimated Time" value="3 to 5 hrs" />
-            <Detail label="Languages" value="TypeScript, CSS" />
-            <Detail label="Assignee" value="Unassigned" />
-            <Detail label="Milestone" value="v2.4" />
-            <Detail label="Linked PRs" value="None" />
-
-            <div className="start-section">
-
-              <h2>How to get started</h2>
-
-              <Step
-                number="01"
-                title="Comment on the issue"
-                description="Let the maintainers know you are working on it."
-              />
-
-              <Step
-                number="02"
-                title="Fork and run locally"
-                description="The setup steps are in CONTRIBUTING.md."
-              />
-
-              <Step
-                number="03"
-                title="Make the change"
-                description="Keep the diff small and follow the existing patterns."
-              />
-
-              <Step
-                number="04"
-                title="Open a pull request"
-                description="Reference #482 in the description."
-              />
-
-            </div>
-            <div className="repository">
-
-              <h2>Repository</h2>
-
-              <Detail
-                label="Medium review time"
-                value="Under 24 hours"
-              />
-
-              <Detail
-                label="Open issues"
-                value="38"
-              />
-
-              <Detail
-                label="Contributors"
-                value="126"
-              />
-
-            </div>
-
-          </aside>
-
-        </div>
-
-      </main>
 
       </div>
     </div>
