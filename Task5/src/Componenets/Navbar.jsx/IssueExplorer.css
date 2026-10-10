@@ -1,6 +1,6 @@
 
 
- *{
+*{
   box-sizing: border-box;
 }
 
@@ -22,6 +22,8 @@
   overscroll-behavior: contain;
   background: #080808;
   color: #e5e5e5;
+  font-size: 16px;
+  line-height: 1.5;
 
   font-family: "Courier New", monospace;
 }
@@ -44,7 +46,7 @@
 
   color: #484848;
 
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .issue-breadcrumb b {
@@ -85,7 +87,7 @@
 
 .search-box svg {
   color: #aaa;
-  font-size: 19px;
+  font-size: 20px;
 }
 
 .search-box input {
@@ -106,7 +108,7 @@
 }
 
 .bell-icon {
-  font-size: 21px;
+  font-size: 24px;
   color: #eee;
 }
 
@@ -138,12 +140,12 @@
   display: block;
 
   font-family: Arial, sans-serif;
-  font-size: 14px;
+  font-size: 16px;
 }
 
 .profile small {
   color: #777;
-  font-size: 11px;
+  font-size: 13px;
 }
 
 .issue-main {
@@ -164,7 +166,7 @@
 
   color: #c65b32;
 
-  font-size: 11px;
+  font-size: 13px;
   font-weight: bold;
 
   letter-spacing: .5px;
@@ -200,7 +202,7 @@
 
   color: #777;
 
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .issue-status b {
@@ -243,7 +245,7 @@
 .issue-actions a {
   color: #ddd;
 
-  font-size: 12px;
+  font-size: 14px;
 
   text-decoration: underline;
 
@@ -260,7 +262,7 @@
 
   margin-top: 42px;
 
-  font-size: 13px;
+  font-size: 15px;
   font-weight: bold;
 }
 
@@ -334,13 +336,13 @@
 .fit-row > strong {
   color: #dc5e2d;
 
-  font-size: 13px;
+  font-size: 15px;
 }
 
 .fit-info h3 {
   margin: 0 0 5px;
 
-  font-size: 13px;
+  font-size: 15px;
 
   color: #ddd;
 }
@@ -350,7 +352,7 @@
 
   color: #777;
 
-  font-size: 10px;
+  font-size: 12px;
 
   line-height: 1.4;
 }
@@ -360,7 +362,7 @@
 
   text-decoration: none;
 
-  font-size: 9px;
+  font-size: 12px;
 
   display: flex;
   justify-content: flex-end;

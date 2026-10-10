@@ -396,7 +396,7 @@
 
 .devpath-journey-label {
   margin: 0 0 16px 4px;
-  color: #eee;
+  color: #fff;
   font-size: 12px;
   letter-spacing: 1px;
 }
@@ -419,7 +419,7 @@
   border: 1px solid transparent;
   border-radius: 6px;
   background: transparent;
-  color: #8d8d8d;
+  color: #fff;
   font: inherit;
   text-align: left;
   cursor: pointer;
@@ -428,12 +428,19 @@
 .devpath-step:hover,
 .devpath-step.active {
   background: #2c1a12;
-  color: #f26a2e;
+  color: #fff !important;
 }
 
 .devpath-step.active {
   border-color: #f26a2e;
   box-shadow: inset 3px 0 0 #f26a2e;
+}
+
+.devpath-step:hover .devpath-step-title,
+.devpath-step:hover .devpath-step-sub,
+.devpath-step.active .devpath-step-title,
+.devpath-step.active .devpath-step-sub {
+  color: #fff !important;
 }
 
 .devpath-step-icon {
@@ -449,16 +456,17 @@
 .devpath-step-title {
   font-size: 13px;
   font-weight: 500;
+  color: #fff !important;
 }
 
 .devpath-step-sub {
   margin-top: 4px;
-  color: #777;
+  color: #d9d9d9 !important;
   font-size: 10px;
 }
 
 .devpath-step.active .devpath-step-sub {
-  color: #b4532a;
+  color: #fff !important;
 }
 
 .devpath-sidebar-divider {
@@ -469,14 +477,14 @@
 
 .devpath-sidebar-tagline {
   padding-left: 12px;
-  color: #eee;
+  color: #fff;
   font-size: 13px;
 }
 
 .devpath-sidebar-tagline span {
   display: block;
   margin-top: 6px;
-  color: #8d8d8d;
+  color: #d9d9d9;
   font-size: 11px;
 }
 
