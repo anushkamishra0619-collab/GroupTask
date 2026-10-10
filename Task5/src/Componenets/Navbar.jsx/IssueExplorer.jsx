@@ -8,6 +8,7 @@ import JourneySidebar from "./JourneySidebar";
 import { useEffect, useState } from "react";
 import { getRecommendedIssues } from "../../services/api.js";
 import "./IssueExplorer.css";
+import { saveContribution } from "../../services/api.js";
 
 export default function IssueExplorer({
   username = "username",
@@ -56,6 +57,16 @@ export default function IssueExplorer({
       .filter(Boolean)
       .some((value) => String(value).toLowerCase().includes(query));
   });
+
+  async function handleSaveIssue(issue) {
+    try {
+      await saveContribution(issue);
+      alert("Issue added to your contribution tracker!");
+    } catch (err) {
+      alert(err.message || "Failed to save issue");
+    }
+  }
+
   return (
     <div className="issue-explorer-layout">
       <JourneySidebar
@@ -237,6 +248,23 @@ export default function IssueExplorer({
                       >
                         Open on GitHub <FiExternalLink />
                       </a>
+
+                      <div className="recommended-issue-footer">
+                        <button
+                          className="save-btn"
+                          onClick={() => handleSaveIssue(issue)}
+                        >
+                          Save to tracker
+                        </button>
+
+                        <a
+                          href={issue.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          Open on GitHub <FiExternalLink />
+                        </a>
+                      </div>
                     </div>
                   </article>
                 ))}
