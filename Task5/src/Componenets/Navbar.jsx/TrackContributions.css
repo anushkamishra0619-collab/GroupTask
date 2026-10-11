@@ -234,3 +234,57 @@
 .dot-pr_submitted {
   background: var(--orange);
 }
+
+@media (max-width: 650px) {
+  .tc-layout {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+    height: auto;
+    min-height: 100vh;
+    min-height: 100dvh;
+    overflow: visible;
+  }
+
+  .tc-page {
+    grid-column: 1;
+    height: auto;
+    overflow: visible;
+    padding: 18px 14px 32px;
+  }
+
+  .tc-topbar {
+    gap: 10px;
+  }
+
+  .tc-breadcrumb {
+    white-space: nowrap;
+  }
+
+  .tc-topbar-right {
+    gap: 10px;
+  }
+
+  .tc-user-role,
+  .tc-user-name {
+    display: none;
+  }
+
+  .tc-stats {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .tc-stat {
+    flex: 1;
+    padding: 0 8px;
+  }
+
+  .tc-tabs {
+    gap: 20px;
+    overflow-x: auto;
+  }
+
+  .tc-tab {
+    flex: 0 0 auto;
+  }
+}

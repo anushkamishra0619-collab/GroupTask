@@ -521,31 +521,93 @@
 
 @media (max-width: 650px) {
   .devpath-sidebar {
-    width: 75px;
-    padding: 25px 8px;
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border-right: 0;
+    border-bottom: 1px solid #303030;
+  }
+
+  .devpath-sidebar > div {
+    display: flex;
+    min-width: 0;
+    flex: 1;
+    align-items: center;
+    gap: 12px;
   }
 
   .devpath-sidebar-logo {
-    justify-content: center;
+    flex: 0 0 auto;
+    margin: 0;
     padding-left: 0;
   }
 
-  .devpath-sidebar-logo span,
   .devpath-journey-label,
-  .devpath-step-title,
   .devpath-step-sub,
   .devpath-sidebar-divider,
   .devpath-sidebar-tagline {
     display: none;
   }
 
+  .devpath-steps {
+    min-width: 0;
+    flex: 1;
+    flex-direction: row;
+    gap: 4px;
+    overflow-x: auto;
+  }
+
+  .devpath-steps li {
+    flex: 0 0 auto;
+  }
+
   .devpath-step {
-    justify-content: center;
-    padding: 10px 4px;
+    width: auto;
+    align-items: center;
+    padding: 8px;
+    white-space: nowrap;
+  }
+
+  .devpath-step-icon {
+    display: none;
+  }
+
+  .devpath-step-title {
+    display: block;
+    font-size: 10px;
   }
 
   .devpath-sidebar-logout {
-    height: 42px;
+    width: auto;
+    height: 38px;
+    flex: 0 0 auto;
+    padding: 0 10px;
+    font-size: 10px;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 420px) {
+  .devpath-sidebar {
+    gap: 8px;
+    padding: 10px 8px;
+  }
+
+  .devpath-sidebar-logo span {
+    display: none;
+  }
+
+  .devpath-sidebar > div {
+    gap: 6px;
+  }
+
+  .devpath-sidebar-logout {
+    width: 34px;
+    padding: 0;
     font-size: 0;
   }
 }

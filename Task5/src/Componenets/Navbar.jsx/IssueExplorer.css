@@ -782,3 +782,49 @@
     grid-template-columns: 1fr;
   }
 }
+
+@media (max-width: 650px) {
+  .issue-explorer-layout {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+    height: auto;
+    min-height: 100vh;
+    min-height: 100dvh;
+    overflow: visible;
+  }
+
+  .issue-page {
+    grid-column: 1;
+    height: auto;
+    overflow: visible;
+    padding-bottom: 24px;
+  }
+
+  .issue-navbar {
+    height: auto;
+    min-height: 64px;
+    gap: 12px;
+  }
+
+  .navbar-right {
+    min-width: 0;
+    gap: 12px;
+  }
+
+  .search-box {
+    width: min(38vw, 140px);
+    min-width: 0;
+  }
+
+  .profile > div:last-child {
+    display: none;
+  }
+
+  .recommended-issue-card {
+    padding: 16px;
+  }
+
+  .recommended-issue-footer {
+    flex-wrap: wrap;
+  }
+}

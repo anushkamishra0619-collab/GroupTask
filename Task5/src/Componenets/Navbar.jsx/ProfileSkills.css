@@ -332,3 +332,59 @@
     padding: 24px 16px;
   }
 }
+
+@media (max-width: 650px) {
+  .profile-preview-layout {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+    height: auto;
+    min-height: 100vh;
+    min-height: 100dvh;
+    overflow: visible;
+  }
+
+  .profile-preview-main {
+    grid-column: 1;
+    height: auto;
+    overflow: visible;
+    padding: 20px 14px 32px;
+  }
+
+  .title {
+    font-size: clamp(28px, 8vw, 36px);
+    overflow-wrap: anywhere;
+  }
+
+  .subtitle {
+    line-height: 1.6;
+  }
+
+  .summary {
+    gap: 12px;
+    padding: 16px;
+  }
+
+  .user {
+    min-width: 0;
+    padding: 0;
+  }
+
+  .stat {
+    min-width: 0;
+    padding: 8px;
+  }
+
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 18px;
+  }
+
+  .skills {
+    min-height: 0;
+    padding: 18px;
+  }
+
+  .skill-head {
+    flex-wrap: wrap;
+  }
+}

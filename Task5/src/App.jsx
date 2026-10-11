@@ -10,6 +10,7 @@ const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 export default function App() {
   const [view, setView] = useState("hero");
   const [authenticated, setAuthenticated] = useState(false);
+  const [visitedViews, setVisitedViews] = useState({ analyze: true });
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -42,16 +43,44 @@ export default function App() {
     setView("hero");
   };
   const handleJourneySelect = (index) => {
-    if (index === 0) setView("analyze");
-    if (index === 1) setView("preview");
-    if (index === 2) setView("issues");
-    if (index === 3) setView("contributions");
+    const nextView = ["analyze", "preview", "issues", "contributions"][index];
+    if (!nextView) return;
+
+    setVisitedViews((previous) => ({ ...previous, [nextView]: true }));
+    setView(nextView);
   };
 
   if (!authenticated) return <Hero onAnalyze={loginWithGitHub} />;
-  if (view === "analyze") return <AnalyzeProfile onJourneySelect={handleJourneySelect} onBack={logout} />;
-  if (view === "preview") return <ProfilePreview onBack={() => setView("analyze")} onLogout={logout} onJourneySelect={handleJourneySelect} />;
-  if (view === "issues") return <IssueExplorer onJourneySelect={handleJourneySelect} onLogout={logout} />;
-  if (view === "contributions") return <TrackContributions onJourneySelect={handleJourneySelect} onLogout={logout} />;
-  return <Hero onAnalyze={loginWithGitHub} />;
+
+  const renderVisitedView = (name, content) =>
+    visitedViews[name] && (
+      <div key={name} style={{ display: view === name ? "block" : "none" }}>
+        {content}
+      </div>
+    );
+
+  return (
+    <>
+      {renderVisitedView(
+        "analyze",
+        <AnalyzeProfile onJourneySelect={handleJourneySelect} onBack={logout} />,
+      )}
+      {renderVisitedView(
+        "preview",
+        <ProfilePreview
+          onBack={() => setView("analyze")}
+          onLogout={logout}
+          onJourneySelect={handleJourneySelect}
+        />,
+      )}
+      {renderVisitedView(
+        "issues",
+        <IssueExplorer onJourneySelect={handleJourneySelect} onLogout={logout} />,
+      )}
+      {renderVisitedView(
+        "contributions",
+        <TrackContributions onJourneySelect={handleJourneySelect} onLogout={logout} />,
+      )}
+    </>
+  );
 }
