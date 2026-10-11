@@ -81,10 +81,6 @@ export default function IssueExplorer({
             <span>DevPath</span>
             <b>/</b>
             <span>Explore issues</span>
-            <b>/</b>
-            <span className="issue-repository-name">open-source/ui-kit</span>
-            <b>/</b>
-            <span>#482</span>
           </div>
 
           <div className="navbar-right">
