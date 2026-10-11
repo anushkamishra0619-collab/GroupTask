@@ -237,14 +237,6 @@ export default function IssueExplorer({
                         {issue.comments ?? 0} comments
                       </span>
 
-                      <a
-                        href={issue.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        Open on GitHub <FiExternalLink />
-                      </a>
-
                       <div className="recommended-issue-footer">
                         <button
                           className="save-btn"
