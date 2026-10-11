@@ -28,7 +28,9 @@ body {
 }
 
 .dp {
-  min-height: 100vh;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
   background: var(--dp-bg);
   color: var(--dp-text);
   font-family: var(--dp-font-mono);

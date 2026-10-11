@@ -138,9 +138,18 @@
 
 .profile strong {
   display: block;
+  color: #fff;
 
   font-family: Arial, sans-serif;
   font-size: 16px;
+}
+
+.profile a,
+.profile a:visited,
+.profile a:hover,
+.profile a:active {
+  color: #fff;
+  text-decoration: none;
 }
 
 .profile small {

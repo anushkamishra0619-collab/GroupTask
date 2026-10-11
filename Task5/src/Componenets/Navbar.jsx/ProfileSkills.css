@@ -95,7 +95,11 @@
   display: grid; place-items: center; font-size: 26px; font-weight: 700;
 }
 .online { position: absolute; right: 0; bottom: 2px; width: 10px; height: 10px; border-radius: 50%; background: #3ddc57; }
-.username { font-size: 17px; margin-bottom: 4px; }
+.username {
+  color: #fff;
+  font-size: 17px;
+  margin-bottom: 4px;
+}
 .stat { flex: 1; padding: 6px 30px; border-left: 1px solid var(--border); }
 .stat-label { font-size: 12px; letter-spacing: 1px; text-transform: uppercase; color: #bdbdbd; margin-bottom: 8px; }
 .stat-value span { font-size: 20px; font-weight: 700; margin-right: 6px; }
@@ -220,8 +224,14 @@
 .profile-link {
   display: inline-block;
   margin-top: 6px;
-  color: var(--orange);
+  color: #fff;
   font-size: 11px;
+  text-decoration: underline;
+}
+.profile-link:hover,
+.profile-link:visited,
+.profile-link:active {
+  color: #fff;
 }
 .empty-message { padding-top: 20px; color: var(--muted); font-size: 12px; }
 .repository-cta {
