@@ -137,6 +137,11 @@
   margin-top: 5px;
 }
 
+.user-details a,
+.user-details a:visited {
+  color: #fff;
+}
+
 .profile-stat {
   min-width: 140px;
   border-left: 1px solid #444;
