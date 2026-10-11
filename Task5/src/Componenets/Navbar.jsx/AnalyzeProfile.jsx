@@ -72,7 +72,7 @@ export default function AnalyzeProfile({ onJourneySelect, onBack }) {
         <section className="user-profile-card">
           <div className="user-details">
             {profile.avatar || profile.avatarUrl ? <img className="user-avatar" src={profile.avatar || profile.avatarUrl} alt={`${displayName}'s avatar`} /> : <div className="user-avatar">{username.charAt(0).toUpperCase()}</div>}
-            <div><h3>{displayName}</h3><p><a href={profileUrl} target="_blank" rel="noreferrer">@{username} · View GitHub profile</a></p>{profile.email && <p>{profile.email}</p>}{profile.bio && <p>{profile.bio}</p>}</div>
+            <div><h3>{displayName}</h3><p><a className="profilelink" href={profileUrl} target="_blank" rel="noreferrer">@{username} · View GitHub profile</a></p>{profile.email && <p>{profile.email}</p>}{profile.bio && <p>{profile.bio}</p>}</div>
           </div>
           <div className="profile-stat"><span>REPOSITORIES</span><strong>{publicRepos}</strong><small>public / accessible</small></div>
           <div className="profile-stat"><span>FOLLOWERS</span><strong>{profile.followers ?? "—"}</strong><small>on GitHub</small></div>

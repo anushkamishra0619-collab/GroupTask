@@ -650,6 +650,8 @@
 
   .user-details {
     flex-basis: 100%;
+  }
+  .profilelink{
     color:white;
   }
 
