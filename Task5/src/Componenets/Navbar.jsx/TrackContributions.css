@@ -60,6 +60,7 @@
   font-family: inherit; font-size: 11px; width: 100%;
   color:white;
 }
+.tc-search input::placeholder { color: #fff; opacity: 1; }
 .tc-icon-btn { font-size: 15px; display: grid; place-items: center; }
 .tc-user { display: flex; align-items: center; gap: 10px; }
 .tc-avatar {
