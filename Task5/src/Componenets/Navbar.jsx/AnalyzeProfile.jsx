@@ -58,7 +58,7 @@ export default function AnalyzeProfile({ onJourneySelect, onBack }) {
 
   return <div className="analyze-page-layout">
     <JourneySidebar activeStep={0} onSelect={onJourneySelect} onLogout={onBack} />
-    <main className="main analyze-profile">
+    <main className="analyze-profile">
       <div className="analysis-breadcrumb"><span>DevPath</span><span>/</span><span>Profile Analysis</span></div>
       <div className="header-line" />
       <div className="profile-heading">
