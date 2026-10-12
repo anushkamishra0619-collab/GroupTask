@@ -86,7 +86,7 @@
 }
 
 .search-box svg {
-  color: #aaa;
+  color:white;
   font-size: 20px;
 }
 
@@ -104,7 +104,7 @@
 }
 
 .search-box input::placeholder {
-  color: #888;
+  color:white;
 }
 
 .bell-icon {
