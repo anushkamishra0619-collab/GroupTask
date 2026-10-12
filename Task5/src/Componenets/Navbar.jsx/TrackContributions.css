@@ -53,6 +53,7 @@
 .tc-search {
   display: flex; align-items: center; gap: 8px; width: 200px;
   background: #4f4e4e; border-radius: 6px; padding: 6px 10px; color: var(--muted);
+  color:white;
 }
 .tc-search input {
   background: none; border: 0; outline: 0; color: var(--text);
