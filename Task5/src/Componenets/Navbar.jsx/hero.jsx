@@ -1,16 +1,5 @@
 import { VscGithub } from "react-icons/vsc";
 
-
-const GithubIcon = () => (
-  <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
-    <circle cx="12" cy="12" r="12" fill="#fff" />
-    <path
-      fill="#0a0a0a"
-      d="M12 3.2a8.8 8.8 0 0 0-2.78 17.15c.44.08.6-.19.6-.42v-1.5c-2.45.53-2.97-1.18-2.97-1.18-.4-1.02-.98-1.29-.98-1.29-.8-.55.06-.54.06-.54.89.06 1.35.91 1.35.91.79 1.35 2.07.96 2.57.73.08-.57.31-.96.56-1.18-1.96-.22-4.01-.98-4.01-4.36 0-.96.34-1.75.9-2.37-.09-.22-.39-1.12.09-2.33 0 0 .74-.24 2.42.9a8.4 8.4 0 0 1 4.4 0c1.68-1.14 2.42-.9 2.42-.9.48 1.21.18 2.11.09 2.33.56.62.9 1.41.9 2.37 0 3.39-2.06 4.14-4.02 4.35.32.27.6.81.6 1.64v2.43c0 .23.16.51.6.42A8.8 8.8 0 0 0 12 3.2Z"
-    />
-  </svg>
-);
-
 const LockIcon = () => (
   <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
     <path
@@ -66,7 +55,7 @@ export default function DevPathHero({ onAnalyze }) {
   return (
     <main className="dp">
       <header className="dp-nav">
-       <VscGithub size={22} />
+        <VscGithub className="dp-nav-github" size={22} />
 
         <span className="dp-brand">DevPath</span>
       </header>
