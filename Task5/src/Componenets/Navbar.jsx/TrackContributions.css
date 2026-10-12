@@ -52,7 +52,7 @@
 .tc-topbar-right { display: flex; align-items: center; gap: 16px; }
 .tc-search {
   display: flex; align-items: center; gap: 8px; width: 200px;
-  background: #1a1a1a; border-radius: 6px; padding: 6px 10px; color: var(--muted);
+  background: #4f4e4e; border-radius: 6px; padding: 6px 10px; color: var(--muted);
 }
 .tc-search input {
   background: none; border: 0; outline: 0; color: var(--text);
