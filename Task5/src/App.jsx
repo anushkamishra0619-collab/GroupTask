@@ -4,6 +4,7 @@ import AnalyzeProfile from "./Componenets/Navbar.jsx/AnalyzeProfile.jsx";
 import ProfilePreview from "./Componenets/Navbar.jsx/ProfilePreview.jsx";
 import IssueExplorer from "./Componenets/Navbar.jsx/IssueExplorer.jsx";
 import TrackContributions from "./Componenets/Navbar.jsx/TrackContributions.jsx";
+import { getProfile } from "./services/api.js";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
@@ -11,6 +12,8 @@ export default function App() {
   const [view, setView] = useState("hero");
   const [authenticated, setAuthenticated] = useState(false);
   const [visitedViews, setVisitedViews] = useState({ analyze: true });
+  const [githubUsername, setGithubUsername] = useState("");
+  const [profileLoadError, setProfileLoadError] = useState(false);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -34,12 +37,39 @@ export default function App() {
     }
   }, []);
 
+  useEffect(() => {
+    if (!authenticated) return undefined;
+
+    let active = true;
+    getProfile()
+      .then((response) => {
+        if (!active) return;
+        const profile = response?.data ?? response?.profile ?? response;
+        const username = profile?.username || profile?.login;
+        if (username) {
+          setGithubUsername(username);
+          setProfileLoadError(false);
+        } else {
+          setProfileLoadError(true);
+        }
+      })
+      .catch(() => {
+        if (active) setProfileLoadError(true);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [authenticated]);
+
   const loginWithGitHub = () => {
     window.location.href = `${API_URL}/api/auth/github`;
   };
   const logout = () => {
     localStorage.removeItem("token");
     setAuthenticated(false);
+    setGithubUsername("");
+    setProfileLoadError(false);
     setView("hero");
   };
   const handleJourneySelect = (index) => {
@@ -75,11 +105,19 @@ export default function App() {
       )}
       {renderVisitedView(
         "issues",
-        <IssueExplorer onJourneySelect={handleJourneySelect} onLogout={logout} />,
+        <IssueExplorer
+          username={githubUsername || (profileLoadError ? "Profile unavailable" : "Loading profile…")}
+          onJourneySelect={handleJourneySelect}
+          onLogout={logout}
+        />,
       )}
       {renderVisitedView(
         "contributions",
-        <TrackContributions onJourneySelect={handleJourneySelect} onLogout={logout} />,
+        <TrackContributions
+          username={githubUsername || (profileLoadError ? "Profile unavailable" : "Loading profile…")}
+          onJourneySelect={handleJourneySelect}
+          onLogout={logout}
+        />,
       )}
     </>
   );

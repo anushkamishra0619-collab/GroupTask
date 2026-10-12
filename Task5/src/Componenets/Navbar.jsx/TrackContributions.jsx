@@ -16,7 +16,11 @@ import JourneySidebar from "./JourneySidebar";
 import "./TrackContributions.css";
 
 
-export default function TrackContributions({ onJourneySelect, onLogout }) {
+export default function TrackContributions({
+  username = "GitHub user",
+  onJourneySelect,
+  onLogout,
+}) {
   const [tab, setTab] = useState("Board");
 
 
@@ -137,9 +141,9 @@ export default function TrackContributions({ onJourneySelect, onLogout }) {
               <FiBell />
             </button>
             <div className="tc-user">
-              <span className="tc-avatar">M</span>
+              <span className="tc-avatar">{username.charAt(0).toUpperCase()}</span>
               <div>
-                <div className="tc-user-name">Username</div>
+                <div className="tc-user-name">{username}</div>
                 <div className="tc-user-role">Student Developer</div>
               </div>
             </div>

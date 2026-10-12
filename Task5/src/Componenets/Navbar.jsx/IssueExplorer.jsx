@@ -11,7 +11,7 @@ import "./IssueExplorer.css";
 import { saveContribution } from "../../services/api.js";
 
 export default function IssueExplorer({
-  username = "username",
+  username = "GitHub user",
   onJourneySelect,
   onLogout,
 }) {
@@ -93,7 +93,7 @@ export default function IssueExplorer({
             <FiBell className="bell-icon" />
 
             <div className="profile">
-              <div className="issue-avatar">{username.charAt(0).toUpperCase() || "M"}</div>
+              <div className="issue-avatar">{username.charAt(0).toUpperCase() || "G"}</div>
 
               <div>
                 <strong>{username}</strong>
