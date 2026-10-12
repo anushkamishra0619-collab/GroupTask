@@ -58,6 +58,7 @@
 .tc-search input {
   background: none; border: 0; outline: 0; color: var(--text);
   font-family: inherit; font-size: 11px; width: 100%;
+  color:white;
 }
 .tc-icon-btn { font-size: 15px; display: grid; place-items: center; }
 .tc-user { display: flex; align-items: center; gap: 10px; }
