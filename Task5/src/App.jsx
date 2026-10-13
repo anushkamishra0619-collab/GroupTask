@@ -7,13 +7,30 @@ import TrackContributions from "./Componenets/Navbar.jsx/TrackContributions.jsx"
 import { getProfile } from "./services/api.js";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const VALID_VIEWS = ["hero", "analyze", "preview", "issues", "contributions"];
 
 export default function App() {
-  const [view, setView] = useState("hero");
-  const [authenticated, setAuthenticated] = useState(false);
-  const [visitedViews, setVisitedViews] = useState({ analyze: true });
+  const [view, setView] = useState(() => {
+    const savedView = localStorage.getItem("devpath-view");
+    return VALID_VIEWS.includes(savedView) ? savedView : "hero";
+  });
+  const [authenticated, setAuthenticated] = useState(() => Boolean(localStorage.getItem("token")));
+  const [visitedViews, setVisitedViews] = useState(() => {
+    const savedView = localStorage.getItem("devpath-view");
+    const initial = { analyze: true };
+    if (savedView && VALID_VIEWS.includes(savedView)) {
+      initial[savedView] = true;
+    }
+    return initial;
+  });
   const [githubUsername, setGithubUsername] = useState("");
   const [profileLoadError, setProfileLoadError] = useState(false);
+
+  const changeView = (nextView) => {
+    if (!VALID_VIEWS.includes(nextView)) return;
+    setView(nextView);
+    localStorage.setItem("devpath-view", nextView);
+  };
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -28,12 +45,14 @@ export default function App() {
       localStorage.setItem("token", token);
       window.history.replaceState({}, document.title, window.location.pathname);
       setAuthenticated(true);
-      setView("analyze");
+      const savedView = localStorage.getItem("devpath-view");
+      changeView(savedView && VALID_VIEWS.includes(savedView) ? savedView : "analyze");
       return;
     }
     if (localStorage.getItem("token")) {
       setAuthenticated(true);
-      setView("analyze");
+      const savedView = localStorage.getItem("devpath-view");
+      changeView(savedView && VALID_VIEWS.includes(savedView) ? savedView : "analyze");
     }
   }, []);
 
@@ -67,6 +86,7 @@ export default function App() {
   };
   const logout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("devpath-view");
     setAuthenticated(false);
     setGithubUsername("");
     setProfileLoadError(false);
@@ -77,7 +97,7 @@ export default function App() {
     if (!nextView) return;
 
     setVisitedViews((previous) => ({ ...previous, [nextView]: true }));
-    setView(nextView);
+    changeView(nextView);
   };
 
   if (!authenticated) return <Hero onAnalyze={loginWithGitHub} />;
@@ -98,7 +118,7 @@ export default function App() {
       {renderVisitedView(
         "preview",
         <ProfilePreview
-          onBack={() => setView("analyze")}
+          onBack={() => changeView("analyze")}
           onLogout={logout}
           onJourneySelect={handleJourneySelect}
         />,

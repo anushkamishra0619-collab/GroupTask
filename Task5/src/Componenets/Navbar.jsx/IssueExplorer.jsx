@@ -76,31 +76,32 @@ export default function IssueExplorer({
       />
       <div className="issue-page">
         <header className="issue-navbar">
-
           <div className="issue-breadcrumb">
             <span>DevPath</span>
             <b>/</b>
-            <span>Explore issues</span>
+            <span>Explore Issues</span>
           </div>
 
           <div className="navbar-right">
-
             <div className="search-box">
               <FiSearch />
-              <input placeholder="Search..." />
+              <input
+                type="text"
+                value={search}
+                onChange={(event) => setSearch(event.target.value)}
+                placeholder="Search..."
+              />
             </div>
 
-            <FiBell className="bell-icon" />
+            <FiBell className="bell-icon" aria-label="Notifications" />
 
             <div className="profile">
               <div className="issue-avatar">{username.charAt(0).toUpperCase() || "G"}</div>
-
               <div>
                 <strong>{username}</strong>
                 <small>Student Developer</small>
               </div>
             </div>
-
           </div>
         </header>
 
