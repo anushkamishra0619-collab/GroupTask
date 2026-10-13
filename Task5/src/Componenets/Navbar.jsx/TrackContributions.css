@@ -49,26 +49,27 @@
   padding-bottom: 18px; border-bottom: 1px solid var(--border);
 }
 .tc-breadcrumb { display: flex; gap: 8px; font-size: 11px; }
-.tc-topbar-right { display: flex; align-items: center; gap: 16px; }
+.tc-topbar-right { display: flex; align-items: center; gap: 25px; }
 .tc-search {
-  display: flex; align-items: center; gap: 8px; width: 200px;
-  background: #4f4e4e; border-radius: 6px; padding: 6px 10px; color: var(--muted);
-  color:white;
+  display: flex; align-items: center; gap: 9px; width: 200px; height: 34px;
+  background: #494747; border-radius: 8px; padding: 0 10px; color: white;
 }
+.tc-search svg { flex: none; font-size: 20px; }
 .tc-search input {
   background: none; border: 0; outline: 0; color: var(--text);
-  font-family: inherit; font-size: 11px; width: 100%;
-  color:white;
+  font-family: inherit; font-size: 16px; width: 100%;
+  color: white;
 }
 .tc-search input::placeholder { color: #fff; opacity: 1; }
-.tc-icon-btn { font-size: 15px; display: grid; place-items: center; }
-.tc-user { display: flex; align-items: center; gap: 10px; }
+.tc-page .tc-icon-btn { font-size: 24px; display: grid; place-items: center; padding: 0; line-height: 1; color: #eee; }
+.tc-page .tc-icon-btn svg { display: block; }
+.tc-user { display: flex; align-items: center; gap: 12px; }
 .tc-avatar {
-  width: 24px; height: 24px; border-radius: 50%; background: var(--orange);
+  width: 43px; height: 43px; border-radius: 50%; background: #ff6528;
   display: grid; place-items: center; font-weight: 700; font-size: 11px; color: #fff;
 }
-.tc-user-name { font-size: 10px; font-weight: 700; }
-.tc-user-role { font-size: 9px; color: var(--muted); }
+.tc-user-name { font-family: Arial, sans-serif; font-size: 16px; font-weight: 700; color: #fff; }
+.tc-user-role { font-size: 13px; color: #777; }
 
 .tc-hero {
   display: flex; justify-content: space-between; align-items: flex-end;
