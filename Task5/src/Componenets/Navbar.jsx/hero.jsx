@@ -55,7 +55,7 @@ export default function DevPathHero({ onAnalyze }) {
   return (
     <main className="dp">
       <header className="dp-nav">
-        <VscGithub className="dp-nav-github" size={22} />
+        <img className="dp-nav-logo" src="/webicon.svg" alt="" aria-hidden="true" />
 
         <span className="dp-brand">DevPath</span>
       </header>

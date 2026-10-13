@@ -43,8 +43,10 @@ body {
   align-items: center;
   gap: 8px;
 }
-.dp-nav-github {
-  color: var(--dp-accent);
+.dp-nav-logo {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
 }
 .dp-brand {
   font-family: system-ui, sans-serif;

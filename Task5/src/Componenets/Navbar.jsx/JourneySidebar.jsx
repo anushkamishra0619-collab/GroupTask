@@ -1,4 +1,3 @@
-import { VscGithub } from "react-icons/vsc";
 import { FiPower } from "react-icons/fi";
 import { FaRegCircle, FaCircle } from "react-icons/fa";
 import journey from "./journey";
@@ -15,7 +14,7 @@ export default function JourneySidebar({ activeStep, onSelect, onLogout }) {
     <aside className="devpath-sidebar">
       <div>
         <div className="devpath-sidebar-logo">
-          <VscGithub size={22} />
+          <img src="/webicon.svg" alt="" aria-hidden="true" />
           <span>DevPath</span>
         </div>
 
