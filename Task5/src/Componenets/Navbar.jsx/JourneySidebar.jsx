@@ -14,7 +14,7 @@ export default function JourneySidebar({ activeStep, onSelect, onLogout }) {
     <aside className="devpath-sidebar">
       <div>
         <div className="devpath-sidebar-logo">
-          <img src="/webicon.svg" alt="" aria-hidden="true" />
+          <img src="/devPath.jpg" alt="" aria-hidden="true" />
           <span>DevPath</span>
         </div>
 

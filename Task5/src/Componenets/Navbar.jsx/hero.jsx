@@ -55,7 +55,7 @@ export default function DevPathHero({ onAnalyze }) {
   return (
     <main className="dp">
       <header className="dp-nav">
-        <img className="dp-nav-logo" src="/webicon.svg" alt="" aria-hidden="true" />
+        <img className="dp-nav-logo" src="/devPath.jpg" alt="" aria-hidden="true" />
 
         <span className="dp-brand">DevPath</span>
       </header>
